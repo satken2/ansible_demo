@@ -34,7 +34,8 @@
       - name: Apache起動時の環境変数を設定
         lineinfile:
             path: /etc/apache2/apache2.conf
-            regexp: SetEnv\s+FUEL_ENV\s+{{ environment_name }}
+            regexp: SetEnv\s+FUEL_ENV
+            line: SetEnv FUEL_ENV {{ environment_name }}
             state: present
         notify: restart_apache2
 
