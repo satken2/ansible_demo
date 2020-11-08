@@ -1,0 +1,5 @@
+[demoservers]
+xxx.xxx.xxx.xxx
+
+[demoservers:vars]
+environment_name=staging

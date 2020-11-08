@@ -1,0 +1,50 @@
+---
+  - hosts: demoservers
+    gather_facts: yes
+    remote_user: root
+    vars:
+        ansible_password: p@ssword123
+    
+    vars_files:
+      - vars/{{ environment_name }}/db_info.yml
+
+    tasks:
+      - name: Apache2のインストール
+        apt:
+            name: apache2
+            state: latest
+    
+      - name: confファイルを配置する
+        copy:
+            src: apache2.conf
+            dest: /etc/apache2/apache2.conf
+        notify: restart_apache2
+    
+      - name: トップページの配置
+        copy:
+            src: index.html
+            dest: /var/www/html/index.html
+    
+      - name: Apache2のサービス有効化
+        service:
+            name: apache2
+            state: started
+            enabled: yes
+
+      - name: Apache起動時の環境変数を設定
+        lineinfile:
+            path: /etc/apache2/apache2.conf
+            regexp: SetEnv\s+FUEL_ENV\s+{{ environment_name }}
+            state: present
+        notify: restart_apache2
+
+      - name: MySQLコンフィグファイルを書き込み
+        template:
+            dest: /etc/mysql/my.conf.j2
+            src: my.conf
+
+    handlers:
+      - name: restart_apache2
+        service:
+            name: apache2
+            state: restarted
