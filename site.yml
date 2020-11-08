@@ -21,8 +21,8 @@
         notify: restart_apache2
     
       - name: トップページの配置
-        copy:
-            src: index.html
+        template:
+            src: index.html.j2
             dest: /var/www/html/index.html
     
       - name: Apache2のサービス有効化
@@ -38,11 +38,6 @@
             line: SetEnv FUEL_ENV {{ environment_name }}
             state: present
         notify: restart_apache2
-
-      - name: MySQLコンフィグファイルを書き込み
-        template:
-            dest: /etc/mysql/my.conf.j2
-            src: my.conf
 
     handlers:
       - name: restart_apache2
